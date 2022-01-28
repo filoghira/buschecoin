@@ -9,7 +9,14 @@
   "author": "Filippo Ghirardini",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.2"
+    "@prisma/client": "^3.8.1",
+    "dotenv": "^14.3.2",
+    "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "prisma": "^3.8.1"
+  }
 }
