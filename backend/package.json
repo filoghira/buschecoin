@@ -10,9 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^3.8.1",
+    "csv-string": "^4.0.1",
     "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.4",
     "mysql": "^2.18.1"
   },
   "type": "module",
