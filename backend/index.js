@@ -1,40 +1,31 @@
 import express, { json } from "express";
 import dotenv from "dotenv";
 import crypto from "crypto";
-import jwt from "jsonwebtoken";
 import multer from "multer";
+import cors from "cors";
 import * as CSV from "csv-string";
+import { verifyToken, generateToken } from "./Token.js";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
+
+dotenv.config();
 
 let storage = multer.memoryStorage();
 let upload = multer({ storage: storage });
 
-import pkg from "@prisma/client";
-const { PrismaClient } = pkg;
-
-function verifyToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      console.log(err);
-      return res.sendStatus(403);
-    }
-    req.user = user;
-    next();
-  });
-}
-
-dotenv.config();
+var corsOptions = {
+  origin: "http://localhost:3000",
+  optionsSuccessStatus: 200,
+};
 
 const prisma = new PrismaClient();
 
 const app = express();
 app.use(json());
 
-app.get("/api/login", async (req, res) => {
+app.options("*", cors(corsOptions));
+
+app.post("/api/login", cors(corsOptions), async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
@@ -60,11 +51,8 @@ app.get("/api/login", async (req, res) => {
       },
     });
 
-    const token = jwt.sign(
-      { username: username, authlevel: user.authlevel },
-      process.env.JWT_SECRET,
-      { expiresIn: "3000s" }
-    );
+    const token = generateToken(username, user.authlevel);
+
     res
       .status(200)
       .send({ success: true, message: "Login success", token: token });
@@ -99,6 +87,24 @@ app.post(
     res.status(200).send({ success: true, message: "Registration success" });
   }
 );
+
+app.get("/api/user", [cors(corsOptions), verifyToken], async (req, res) => {
+  const user = await prisma.users.findFirst({
+    where: {
+      username: req.params.username,
+    },
+  });
+
+  const data = {
+    username: user.username,
+    name: user.name,
+    surname: user.surname,
+    email: user.email,
+    class: user.class,
+  }
+
+  res.status(200).send(data);
+});
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server is running on port ${process.env.SERVER_PORT}`);
