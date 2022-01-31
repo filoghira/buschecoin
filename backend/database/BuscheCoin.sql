@@ -7,8 +7,35 @@ create TABLE if not EXISTS users (
     email tinytext,
     class tinytext,
     authlevel int not null,
-    last_login datetime
+    last_login datetime,
+    balance int not null default 0 CHECK (balance >= 0),
 );
+
+create table if not EXISTS objectTypes (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name tinytext not null,
+    description text NOT NULL,
+    min_value INT NOT NULL DEFAULT 0 CHECK (min_value >= 0)
+);
+
+CREATE TABLE if not EXISTS objects (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    type int REFERENCES objectTypes(id),
+    name tinytext not null,
+    owner_id int REFERENCES users(id),
+    creator_id int REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS transactions (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    seller_id INTEGER REFERENCES users(id),
+    buyer_id INTEGER REFERENCES users(id),
+    value INTEGER NOT NULL,
+    timestamp DATETIME NOT NULL
+);
+
+insert into objecttypes (name, description, min_value)
+VALUES ('skip_interrogazione', 'Evita una chiamata da interrogato', 50);
 
 insert into users (
         username,

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid, Avatar, TextField, Stack, Paper, Box } from "@mui/material";
+import { Grid, Avatar, TextField, Stack, Paper } from "@mui/material";
 import UserService from "../user.service";
 
 type ProfileProps = {
@@ -42,7 +42,9 @@ export default class Home extends React.Component<{}, ProfileProps> {
   }
 
   componentDidMount() {
-    UserService.getUserBoard().then((res) => {
+    UserService.getUserBoard(
+      JSON.parse(sessionStorage.getItem("user")).username
+    ).then((res) => {
       console.log(res);
       this.handleUserChange(res);
     });
@@ -62,7 +64,13 @@ export default class Home extends React.Component<{}, ProfileProps> {
           component={Stack}
           direction="column"
           justifyContent="center"
-          sx={{ minWidth: 250, width: "30%", height: 1, borderRadius: 10, p: 2 }}
+          sx={{
+            minWidth: 250,
+            width: "30%",
+            height: 1,
+            borderRadius: 10,
+            p: 2,
+          }}
         >
           <Grid
             container

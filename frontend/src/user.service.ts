@@ -4,13 +4,15 @@ import authHeader from "./auth-header";
 const API_URL = "http://localhost:3030/api/";
 
 class UserService {
-  async getUserBoard() {
-    const user = await axios.get(API_URL + "user", {
-      headers: authHeader(),
-      params: {
-        username: JSON.parse(sessionStorage.getItem("user")).username,
-      },
-    }).then(result => result.data);
+  async getUserBoard(username: string) {
+    const user = await axios
+      .get(API_URL + "user/" + username, {
+        headers: authHeader(),
+        params: {
+          username: JSON.parse(sessionStorage.getItem("user")).username,
+        },
+      })
+      .then((result) => result.data);
     return user;
   }
 

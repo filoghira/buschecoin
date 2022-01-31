@@ -4,7 +4,7 @@ import crypto from "crypto";
 import multer from "multer";
 import cors from "cors";
 import * as CSV from "csv-string";
-import { verifyToken, generateToken } from "./Token.js";
+import { generateToken, verifyUser } from "./Token.js";
 import pkg from "@prisma/client";
 const { PrismaClient } = pkg;
 
@@ -62,7 +62,7 @@ app.post("/api/login", cors(corsOptions), async (req, res) => {
 
 app.post(
   "/api/register",
-  [verifyToken, upload.single("file")],
+  [verifyUser, upload.single("file")],
   async (req, res) => {
     const data = CSV.parse(req.file["buffer"].toString());
 
@@ -88,23 +88,56 @@ app.post(
   }
 );
 
-app.get("/api/user", [cors(corsOptions), verifyToken], async (req, res) => {
-  const user = await prisma.users.findFirst({
-    where: {
-      username: req.params.username,
-    },
-  });
+app.get(
+  "/api/user/:username",
+  [cors(corsOptions), verifyUser],
+  async (req, res) => {
+    const user = await prisma.users.findFirst({
+      where: {
+        username: req.params.username,
+      },
+    });
 
-  const data = {
-    username: user.username,
-    name: user.name,
-    surname: user.surname,
-    email: user.email,
-    class: user.class,
+    const data = {
+      username: user.username,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+      class: user.class,
+    };
+
+    res.status(200).send(data);
   }
+);
 
-  res.status(200).send(data);
-});
+app.get(
+  "/api/user/:username/inventory",
+  [cors(corsOptions), verifyUser],
+  async (req, res) => {
+    const owner_id = await prisma.users.findFirst({
+      where: {
+        username: req.params.username,
+      },
+      select: { id: true },
+    });
+
+    if (owner_id) {
+      const objects = await prisma.objects.findMany({
+        where: {
+          owner_id: owner_id.id,
+        },
+      });
+
+      res.status(200).send({
+        success: true,
+        message: "Inventory successfully retrieved",
+        data: objects,
+      });
+    } else {
+      res.status(400).send({ success: false, message: "User not found" });
+    }
+  }
+);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server is running on port ${process.env.SERVER_PORT}`);
