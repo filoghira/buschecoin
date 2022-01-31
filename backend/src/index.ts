@@ -4,9 +4,8 @@ import crypto from "crypto";
 import multer from "multer";
 import cors from "cors";
 import * as CSV from "csv-string";
-import { generateToken, verifyUser } from "./Token.js";
-import pkg from "@prisma/client";
-const { PrismaClient } = pkg;
+import { generateToken, verifyUser } from "./auth.service";
+import { PrismaClient } from '@prisma/client'
 
 dotenv.config();
 
