@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import {
   Grid,
   OutlinedInput,
@@ -9,10 +10,13 @@ import {
   FormControl,
   InputLabel,
   Button,
+  Collapse,
+  Alert,
 } from "@mui/material";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import authService from "../auth.service";
 import { useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function Login() {
   const [values, setValues] = React.useState({
@@ -21,11 +25,13 @@ export default function Login() {
     showPassword: false,
   });
 
+  const [open, setOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
+
   const navigate = useNavigate();
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
-    console.log(values);
   };
 
   const handleClickShowPassword = () => {
@@ -39,10 +45,18 @@ export default function Login() {
     event.preventDefault();
   };
 
-  const login = async () => {
-    await authService.login(values.username, values.password);
-    console.log(values);
-    navigate("/");
+  const login = () => {
+    authService
+      .login(values.username, values.password)
+      .then(() => {
+        navigate("/");
+        window.location.reload();
+      })
+      .catch((err) => {
+        setErrorMessage(err.response.data.message);
+        setOpen(true);
+        console.log(this.open);
+      });
   };
 
   return (
@@ -63,7 +77,7 @@ export default function Login() {
         justifyContent="center"
       >
         <Stack direction="row" justifyContent="center">
-          <img src="/bitcoin.png" height="300" alt="logo"/>
+          <img src="/bitcoin.png" height="300" alt="logo" />
         </Stack>
       </Grid>
       <Grid
@@ -154,6 +168,44 @@ export default function Login() {
           >
             Login
           </Button>
+        </Stack>
+      </Grid>
+      <Grid
+        item
+        container
+        xs={12}
+        sm={12}
+        md={12}
+        lg={12}
+        xl={12}
+        justifyContent="center"
+      >
+        <Stack
+          direction="column"
+          justifyContent="flex-end"
+          style={{ position: "absolute", bottom: 50 }}
+        >
+          <Collapse in={open}>
+            <Alert
+              severity="error"
+              variant="filled"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              {errorMessage}
+            </Alert>
+          </Collapse>
         </Stack>
       </Grid>
     </Grid>

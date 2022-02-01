@@ -5,7 +5,7 @@ import multer from "multer";
 import cors from "cors";
 import * as CSV from "csv-string";
 import { generateToken, verifyUser } from "./auth.service";
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 
 dotenv.config();
 
@@ -113,17 +113,26 @@ app.get(
   "/api/user/:username/inventory",
   [cors(corsOptions), verifyUser],
   async (req, res) => {
-    const owner_id = await prisma.users.findFirst({
+    const user = await prisma.users.findFirst({
       where: {
         username: req.params.username,
       },
       select: { id: true },
     });
 
-    if (owner_id) {
+    if (user) {
       const objects = await prisma.objects.findMany({
         where: {
-          owner_id: owner_id.id,
+          ownerId: user.id,
+        },
+        select: {
+          id: true,
+          objecttypes: {
+            select: {
+              name: true,
+            },
+          },
+          name: true,
         },
       });
 

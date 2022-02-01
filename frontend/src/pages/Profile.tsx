@@ -10,14 +10,6 @@ type ProfileProps = {
   class: string;
 };
 
-type User = {
-  username: string;
-  name: string;
-  surname: string;
-  email: string;
-  class: string;
-};
-
 export default class Home extends React.Component<{}, ProfileProps> {
   constructor(props) {
     super(props);
@@ -31,7 +23,7 @@ export default class Home extends React.Component<{}, ProfileProps> {
     this.handleUserChange = this.handleUserChange.bind(this);
   }
 
-  handleUserChange(user: User) {
+  handleUserChange(user: ProfileProps) {
     this.setState({
       username: user.username,
       name: user.name,
@@ -42,10 +34,7 @@ export default class Home extends React.Component<{}, ProfileProps> {
   }
 
   componentDidMount() {
-    UserService.getUserBoard(
-      JSON.parse(sessionStorage.getItem("user")).username
-    ).then((res) => {
-      console.log(res);
+    UserService.getUserBoard().then((res) => {
       this.handleUserChange(res);
     });
   }
@@ -113,7 +102,6 @@ export default class Home extends React.Component<{}, ProfileProps> {
               <TextField
                 id="outlined-read-only-input"
                 label="Username"
-                defaultValue="username"
                 value={this.state.username}
                 sx={{ width: 1 }}
                 InputProps={{
@@ -145,7 +133,6 @@ export default class Home extends React.Component<{}, ProfileProps> {
                 <TextField
                   id="outlined-read-only-input"
                   label="Nome"
-                  defaultValue="nome"
                   value={this.state.name}
                   sx={{ width: 1 }}
                   InputProps={{
@@ -166,7 +153,7 @@ export default class Home extends React.Component<{}, ProfileProps> {
                 <TextField
                   id="outlined-read-only-input"
                   label="Cognome"
-                  defaultValue="cognome"
+                  value={this.state.surname}
                   sx={{ width: 1 }}
                   InputProps={{
                     readOnly: true,
@@ -198,7 +185,6 @@ export default class Home extends React.Component<{}, ProfileProps> {
                 <TextField
                   id="outlined-read-only-input"
                   label="Email"
-                  defaultValue="nome.cognome@pippo.com"
                   value={this.state.email}
                   sx={{ width: 1 }}
                   InputProps={{
@@ -219,7 +205,6 @@ export default class Home extends React.Component<{}, ProfileProps> {
                 <TextField
                   id="outlined-read-only-input"
                   label="Classe"
-                  defaultValue="6AIN"
                   value={this.state.class}
                   sx={{ width: 1 }}
                   InputProps={{

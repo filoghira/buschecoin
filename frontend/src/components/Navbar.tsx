@@ -95,15 +95,17 @@ export default function Navbar() {
       <CssBaseline />
       <AppBar position="fixed">
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {AuthService.getCurrentUser() ? (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ mr: 2, ...(open && { display: "none" }) }}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : null}
           <Typography variant="h6" noWrap component="div" color="primary.main">
             BUSCHE - Coin
           </Typography>
@@ -163,7 +165,10 @@ export default function Navbar() {
             button
             component={Link}
             to="/login"
-            onClick={() => AuthService.logout()}
+            onClick={() => {
+              handleDrawerClose();
+              AuthService.logout();
+            }}
           >
             <ListItemIcon>
               <LogoutIcon />

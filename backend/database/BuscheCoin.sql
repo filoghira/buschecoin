@@ -1,5 +1,5 @@
 create TABLE if not EXISTS users (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id int PRIMARY KEY AUTO_INCREMENT,
     username tinytext not null,
     name tinytext not null,
     surname tinytext not null,
@@ -8,30 +8,35 @@ create TABLE if not EXISTS users (
     class tinytext,
     authlevel int not null,
     last_login datetime,
-    balance int not null default 0 CHECK (balance >= 0),
+    balance int not null default 0 CHECK (balance >= 0)
 );
 
 create table if not EXISTS objectTypes (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id int PRIMARY KEY AUTO_INCREMENT,
     name tinytext not null,
     description text NOT NULL,
-    min_value INT NOT NULL DEFAULT 0 CHECK (min_value >= 0)
+    min_value int NOT NULL DEFAULT 0 CHECK (min_value >= 0)
 );
 
 CREATE TABLE if not EXISTS objects (
     id int PRIMARY KEY AUTO_INCREMENT,
-    type int REFERENCES objectTypes(id),
+    typeId int,
     name tinytext not null,
-    owner_id int REFERENCES users(id),
-    creator_id int REFERENCES users(id)
+    ownerId int,
+    creatorId int,
+    constraint foreign key (typeId) REFERENCES objectTypes (id),
+    constraint foreign key (ownerId) REFERENCES users (id),
+    constraint foreign key (creatorId) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS transactions (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    seller_id INTEGER REFERENCES users(id),
-    buyer_id INTEGER REFERENCES users(id),
-    value INTEGER NOT NULL,
-    timestamp DATETIME NOT NULL
+    id int PRIMARY KEY AUTO_INCREMENT,
+    sellerId int,
+    buyerId int,
+    value int NOT NULL,
+    timestamp DATETIME NOT NULL,
+    constraint foreign key (sellerId) references users (id),
+    constraint foreign key (buyerId) references users (id)
 );
 
 insert into objecttypes (name, description, min_value)
@@ -55,3 +60,6 @@ values (
         '6AIN',
         0
     );
+
+insert into objects (typeId, name, ownerId, creatorId)
+values (1, "Oggetto di test", 1, 1);

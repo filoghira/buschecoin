@@ -8,8 +8,12 @@ export function verifyUser(req, res, next) {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err || user.username !== req.params.username || user.authlevel > 1) {
-      console.log(err);
-      return res.sendStatus(403);
+      if (err instanceof jwt.TokenExpiredError)
+        res.status(401).send({ success: false, message: "Token expired" });
+      else
+        res
+          .status(403)
+          .send({ success: false, message: "Authorization level is too low" });
     }
     next();
   });
