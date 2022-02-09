@@ -133,6 +133,7 @@ app.get(
             },
           },
           name: true,
+          currValue: true,
         },
       });
 

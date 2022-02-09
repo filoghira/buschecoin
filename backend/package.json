@@ -12,7 +12,7 @@
   "author": "Filippo Ghirardini",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^3.8.1",
+    "@prisma/client": "^3.9.1",
     "cors": "^2.8.5",
     "csv-string": "^4.0.1",
     "dotenv": "^14.3.2",

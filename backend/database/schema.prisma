@@ -8,14 +8,16 @@ datasource db {
 }
 
 model objects {
-  id                             Int          @id @default(autoincrement())
-  typeId                         Int?
-  name                           String       @db.TinyText
+  id                             Int         @id @default(autoincrement())
+  typeId                         Int
+  name                           String      @db.TinyText
   ownerId                        Int?
-  creatorId                      Int?
-  users_objects_creatorIdTousers users?       @relation("objects_creatorIdTousers", fields: [creatorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "objects_ibfk_3")
-  users_objects_ownerIdTousers   users?       @relation("objects_ownerIdTousers", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "objects_ibfk_2")
-  objecttypes                    objecttypes? @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "objects_ibfk_1")
+  creatorId                      Int
+  onMarket                       Boolean     @default(false)
+  currValue                      Float?      @db.Float
+  users_objects_creatorIdTousers users       @relation("objects_creatorIdTousers", fields: [creatorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "objects_ibfk_3")
+  users_objects_ownerIdTousers   users?      @relation("objects_ownerIdTousers", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "objects_ibfk_2")
+  objecttypes                    objecttypes @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "objects_ibfk_1")
 
   @@index([creatorId], map: "creatorId")
   @@index([ownerId], map: "ownerId")
@@ -26,7 +28,7 @@ model objecttypes {
   id          Int       @id @default(autoincrement())
   name        String    @db.TinyText
   description String    @db.Text
-  min_value   Int       @default(0)
+  minValue    Int       @default(0)
   objects     objects[]
 }
 
@@ -34,7 +36,7 @@ model transactions {
   id                                 Int      @id @default(autoincrement())
   sellerId                           Int?
   buyerId                            Int?
-  value                              Int
+  value                              Float    @db.Float
   timestamp                          DateTime @db.DateTime(0)
   users_transactions_buyerIdTousers  users?   @relation("transactions_buyerIdTousers", fields: [buyerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_2")
   users_transactions_sellerIdTousers users?   @relation("transactions_sellerIdTousers", fields: [sellerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_1")
@@ -53,7 +55,7 @@ model users {
   class                                     String?        @db.TinyText
   authlevel                                 Int
   last_login                                DateTime?      @db.DateTime(0)
-  balance                                   Int            @default(0)
+  balance                                   Float          @default(0) @db.Float
   objects_objects_creatorIdTousers          objects[]      @relation("objects_creatorIdTousers")
   objects_objects_ownerIdTousers            objects[]      @relation("objects_ownerIdTousers")
   transactions_transactions_buyerIdTousers  transactions[] @relation("transactions_buyerIdTousers")
