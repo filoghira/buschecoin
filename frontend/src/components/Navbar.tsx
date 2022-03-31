@@ -160,7 +160,7 @@ export default function Navbar() {
             <ListItemText primary="Inventory" />
           </ListItem>
         </List>
-        <List style={{ position: "absolute", bottom: 0 }}>
+        <List style={{ position: "absolute", bottom: 0, width: "100%" }}>
           <ListItem
             button
             component={Link}

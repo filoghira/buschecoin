@@ -107,16 +107,13 @@ export default function Inventory() {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Subscribe</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText>
+          <DialogContentText>Bla bla bla</DialogContentText>
           <TextField
             autoFocus
             margin="dense"
             id="name"
-            label="Email Address"
-            type="email"
+            label="Price"
+            type="number"
             fullWidth
             variant="standard"
           />

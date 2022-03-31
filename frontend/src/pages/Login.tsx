@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useEffect } from "react";
 import {
   Grid,
   OutlinedInput,
@@ -39,10 +38,6 @@ export default function Login() {
       ...values,
       showPassword: !values.showPassword,
     });
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
   };
 
   const login = () => {
@@ -139,7 +134,6 @@ export default function Login() {
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
                     {values.showPassword ? <VisibilityOff /> : <Visibility />}
